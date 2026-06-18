@@ -1,0 +1,29 @@
+/* Global styles */
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel-2: #1f2330;
+  --border: #2a2f3d;
+  --text: #e6e8ee;
+  --muted: #9aa3b2;
+  --member: #3b82f6;
+  --candidate: #94a3b8;
+  --best: #f5b301;
+  --accent: #22c55e;
+  --danger: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}

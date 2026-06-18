@@ -1,0 +1,6 @@
+@Middleground.Api_HostAddress = http://localhost:5130
+
+GET {{Middleground.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

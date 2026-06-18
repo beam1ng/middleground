@@ -1,0 +1,100 @@
+<div class="layout">
+  <div #map class="map"></div>
+
+  <aside class="panel">
+    <header class="panel__head">
+      <h1>Middleground</h1>
+      <p>Find the fairest place to meet in Poland.</p>
+    </header>
+
+    <section class="block">
+      <div class="seg">
+        <button
+          type="button"
+          [class.seg__on]="mode() === 'member'"
+          (click)="setMode('member')">
+          Add members
+        </button>
+        <button
+          type="button"
+          [class.seg__on]="mode() === 'candidate'"
+          (click)="setMode('candidate')">
+          Add candidates
+        </button>
+      </div>
+      <p class="hint">
+        Click the map to drop a
+        <strong>{{ mode() === 'member' ? 'member origin' : 'candidate destination' }}</strong>.
+      </p>
+    </section>
+
+    <section class="block">
+      <h2>Members <span class="count">{{ members().length }}</span></h2>
+      @for (m of members(); track m.id) {
+        <div class="row">
+          <span class="dot dot--member"></span>
+          <span class="row__label">{{ m.label }}</span>
+          <button class="x" type="button" (click)="removeMember(m.id)">✕</button>
+        </div>
+      } @empty {
+        <p class="empty">No members yet.</p>
+      }
+    </section>
+
+    <section class="block">
+      <h2>Candidates <span class="count">{{ candidates().length }}</span></h2>
+      @for (c of candidates(); track c.id) {
+        <div class="row">
+          <span class="dot" [class.dot--best]="c.id === bestId()" [class.dot--candidate]="c.id !== bestId()"></span>
+          <span class="row__label">{{ c.name }}</span>
+          <button class="x" type="button" (click)="removeCandidate(c.id)">✕</button>
+        </div>
+      } @empty {
+        <p class="empty">No candidates yet.</p>
+      }
+    </section>
+
+    <section class="block">
+      <label class="lbl" for="obj">Objective</label>
+      <select id="obj" class="select" [value]="objective()" (change)="setObjective($any($event.target).value)">
+        @for (o of objectives; track o) {
+          <option [value]="o">{{ o }}</option>
+        }
+      </select>
+
+      <div class="actions">
+        <button class="btn btn--primary" type="button" [disabled]="!canPlan()" (click)="plan()">
+          {{ loading() ? 'Computing…' : 'Find fairest' }}
+        </button>
+        <button class="btn" type="button" (click)="clearAll()">Clear</button>
+      </div>
+    </section>
+
+    @if (error(); as err) {
+      <p class="error">{{ err }}</p>
+    }
+
+    @if (result(); as r) {
+      <section class="block results">
+        <h2>Ranking</h2>
+        @for (s of r.ranked; track s.candidate.id; let i = $index) {
+          <div class="result" [class.result--best]="i === 0">
+            <div class="result__head">
+              <span class="rank">#{{ i + 1 }}</span>
+              <span class="result__name">{{ s.candidate.name }}</span>
+              <span class="result__score">{{ scoreLabel(s) }}</span>
+            </div>
+            @if (!s.allReachable) {
+              <p class="unreachable">Some members can’t reach this point.</p>
+            }
+            <div class="travels">
+              @for (t of s.memberTravels; track t.memberId) {
+                <span class="travel">{{ t.label }}: {{ minutes(t.durationSeconds) }}</span>
+              }
+            </div>
+          </div>
+        }
+      </section>
+    }
+  </aside>
+</div>
